@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<!-- saved from url=(0089)file:///C:/Users/qxb843/Downloads/brooks-band-enterprise-system-v3-interactive%20(1).html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brooks Band™ Enterprise System — Interactive Deep Dive</title>
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+:root{--ink:#0b0b10;--paper:#faf8f4;--cream:#f0ece2;--slate:#1e2130;--teal:#1a9e8e;--teal-glow:#22cbb8;--gold:#c5a044;--rose:#c44d5a;--violet:#7c4dbe;--blue:#3064b8;--green:#2d8c50;--amber:#d68a18;--border:rgba(12,12,18,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.hdr{background:var(--slate);padding:40px 36px 36px;color:#fff;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:0;right:0;width:50%;height:100%;background:radial-gradient(ellipse at 80% 40%,rgba(26,158,142,0.07) 0%,transparent 70%);pointer-events:none}
+.ey{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.hdr h1{font-family:'Syne',sans-serif;font-size:clamp(24px,3.5vw,36px);font-weight:800;line-height:1.15;margin-bottom:8px}
+.hdr h1 em{font-style:normal;color:var(--teal-glow)}
+.hdr .sub{font-size:12px;color:rgba(255,255,255,0.45);font-weight:300;max-width:700px}
+.main{max-width:1260px;margin:0 auto;padding:36px 28px 80px}
+.sec{margin-bottom:48px}
+.sn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.st{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--slate);margin-bottom:4px}
+.sd{font-size:12px;color:#888;font-weight:300;max-width:700px;margin-bottom:24px}
+
+/* === INTERACTIVE LAYER CARDS === */
+.layer-grid{display:flex;flex-direction:column;gap:10px}
+.layer-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer}
+.layer-card:hover{box-shadow:0 8px 28px rgba(12,12,18,0.09);border-color:rgba(26,158,142,0.2)}
+.layer-card.open{box-shadow:0 12px 40px rgba(12,12,18,0.12)}
+.lc-header{display:grid;grid-template-columns:48px 180px 1fr 120px;gap:12px;align-items:center;padding:16px 20px}
+.lc-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;line-height:1}
+.lc-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--slate)}
+.lc-sub{font-size:10px;color:#999;margin-top:2px}
+.lc-tags{display:flex;gap:4px;flex-wrap:wrap}
+.lc-tag{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:0.5px;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+.lc-tag.core{background:#d8f4f0;color:#147a6e}
+.lc-tag.prov{background:#fdf6e3;color:#9a7a20}
+.lc-tag.fut{background:var(--cream);color:#aaa}
+.lc-toggle{font-size:18px;color:#ccc;transition:transform 0.3s;text-align:right}
+.layer-card.open .lc-toggle{transform:rotate(180deg);color:var(--teal)}
+
+/* Deep dive panel */
+.lc-deep{max-height:0;overflow:hidden;transition:max-height 0.5s ease}
+.layer-card.open .lc-deep{max-height:3000px}
+.deep-inner{padding:0 20px 24px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.deep-box{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px}
+.deep-box h5{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--slate);margin-bottom:6px}
+.deep-box p,.deep-box li{font-size:10px;color:#666;line-height:1.6}
+.deep-box ul{padding-left:14px;margin:0}
+.deep-box .cite{font-size:8.5px;color:#aaa;font-style:italic;margin-top:6px;border-top:1px solid var(--border);padding-top:4px}
+.db-patent{border-left:3px solid var(--teal)}
+.db-eng{border-left:3px solid var(--blue)}
+.db-cost{border-left:3px solid var(--gold)}
+.db-comp{border-left:3px solid var(--rose)}
+.db-icp{border-left:3px solid var(--violet)}
+
+/* === AVATAR DISPLAY === */
+.avatar-section{background:var(--slate);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+.avatar-section::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 80%,rgba(26,158,142,0.04) 0%,transparent 60%);pointer-events:none}
+.av-devices{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
+.av-device{text-align:center;position:relative}
+.av-device-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.av-device-note{font-size:9px;color:rgba(255,255,255,0.35);margin-top:8px;line-height:1.5}
+
+/* Watch */
+.watch-frame{width:120px;height:140px;margin:0 auto;position:relative}
+.wf-body{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:90px;height:100px;border-radius:22px;background:linear-gradient(145deg,#2a2e3a,#1a1d28);border:1.5px solid rgba(255,255,255,0.07);box-shadow:0 8px 28px rgba(0,0,0,0.4)}
+.wf-screen{position:absolute;top:10px;left:10px;right:10px;bottom:10px;border-radius:14px;background:radial-gradient(circle at 50% 40%,#0d2a26,#0a1614);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wf-band-t,.wf-band-b{position:absolute;left:50%;transform:translateX(-50%);width:66px;height:24px;background:linear-gradient(180deg,#222630,#1a1d26);border-radius:6px}
+.wf-band-t{top:0;border-radius:6px 6px 0 0}
+.wf-band-b{bottom:0;border-radius:0 0 6px 6px}
+
+/* Desk */
+.desk-frame{width:160px;height:110px;margin:0 auto;position:relative}
+.desk-body{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:140px;height:90px;border-radius:16px 16px 8px 8px;background:linear-gradient(145deg,#2a2e3a,#1e2130);border:1.5px solid rgba(255,255,255,0.07);box-shadow:0 8px 28px rgba(0,0,0,0.4)}
+.desk-screen{position:absolute;top:8px;left:8px;right:8px;bottom:20px;border-radius:10px;background:radial-gradient(circle at 50% 40%,#0d2a26,#0a1614);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.desk-stand{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40px;height:14px;background:#1a1d26;border-radius:0 0 8px 8px}
+
+/* Glasses */
+.glasses-frame{width:200px;height:80px;margin:0 auto;position:relative}
+.gl-body{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:180px;height:50px;position:relative}
+.gl-lens{position:absolute;top:0;width:72px;height:44px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);overflow:hidden}
+.gl-lens.l{left:0}
+.gl-lens.r{right:0}
+.gl-lens .gl-screen{position:absolute;inset:0;background:rgba(10,22,20,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gl-bridge{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:30px;height:12px;border-bottom:2px solid rgba(255,255,255,0.12);border-radius:0 0 50% 50%}
+.gl-arm{position:absolute;top:8px;width:28px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px}
+.gl-arm.l{left:-22px;transform:rotate(-5deg)}
+.gl-arm.r{right:-22px;transform:rotate(5deg)}
+.gl-hud{position:absolute;top:4px;right:4px;width:28px;height:20px;border-radius:4px;border:1px solid var(--teal);opacity:0.3}
+
+/* Animated avatar shared */
+.mini-av{width:36px;height:36px;position:relative;margin:0 auto;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.mini-av .bod{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3de8c8,#1a9e8e 60%,#147a6e);position:absolute;bottom:0;left:50%;transform:translateX(-50%);box-shadow:0 3px 12px rgba(26,158,142,0.4)}
+.mini-av .ey-l,.mini-av .ey-r{position:absolute;width:4px;height:5px;border-radius:50%;background:#0b2e28}
+.mini-av .ey-l{top:10px;left:8px}.mini-av .ey-r{top:10px;right:8px}
+.mini-av .mth{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:8px;height:4px;border-radius:0 0 4px 4px;background:#0b2e28}
+.mini-bar{width:50px;height:3px;border-radius:2px;background:rgba(255,255,255,0.06);margin:6px auto 0;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--teal-glow));animation:grow 4s ease-in-out infinite}
+@keyframes grow{0%{width:25%}50%{width:85%}100%{width:25%}}
+.mini-label{font-family:'JetBrains Mono',monospace;font-size:5.5px;color:rgba(255,255,255,0.3);letter-spacing:0.5px;text-transform:uppercase;margin-top:3px}
+
+/* Glasses-specific large avatar */
+.gl-av{width:20px;height:20px;position:relative;margin:0 auto}
+.gl-av .bod{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3de8c8,#1a9e8e);position:absolute;bottom:0;left:50%;transform:translateX(-50%);box-shadow:0 2px 8px rgba(26,158,142,0.5);animation:float 2.5s ease-in-out infinite}
+.gl-av .ey-l,.gl-av .ey-r{position:absolute;width:2.5px;height:3px;border-radius:50%;background:#0b2e28}
+.gl-av .ey-l{top:5px;left:4px}.gl-av .ey-r{top:5px;right:4px}
+.gl-xp{font-family:'JetBrains Mono',monospace;font-size:5px;color:var(--teal-glow);margin-top:2px;text-align:center}
+.gl-notif{font-family:'JetBrains Mono',monospace;font-size:4px;color:rgba(255,255,255,0.4);text-align:center;margin-top:1px}
+
+/* Speech bubbles for glasses AR */
+.gl-bubble{position:absolute;top:2px;left:2px;background:rgba(26,158,142,0.15);border:0.5px solid rgba(26,158,142,0.3);border-radius:3px;padding:2px 4px;font-family:'JetBrains Mono',monospace;font-size:3.5px;color:var(--teal-glow);animation:pulse-in 2s ease-in-out infinite}
+@keyframes pulse-in{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* === MOAT === */
+.moat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.ml{text-align:center;padding:16px 10px;border-radius:12px;border:1px solid var(--border);background:#fff}
+.ml .mn{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:3px}
+.ml .mm{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--slate);margin-bottom:5px}
+.ml .md{font-size:9px;color:#888;line-height:1.5}
+.m1 .mn{color:var(--teal)}.m2 .mn{color:var(--blue)}.m3 .mn{color:var(--violet)}.m4 .mn{color:var(--green)}.m5 .mn{color:var(--gold)}
+
+.lf{margin-top:56px;padding-top:18px;border-top:1px solid var(--border);font-size:9px;color:#bbb;text-align:center;line-height:1.8}
+
+@media(max-width:960px){
+  .lc-header{grid-template-columns:36px 1fr;gap:8px}
+  .lc-tags{grid-column:1/-1}
+  .deep-inner{grid-template-columns:1fr}
+  .av-devices{grid-template-columns:1fr}
+  .moat-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="ey">Confidential — Interactive Patent &amp; Engineering Deep Dive</div>
+  <h1>Brooks Band™ <em>Enterprise System</em><br>Interactive Architecture</h1>
+  <div class="sub">Click any layer to expand patent landscape, engineering requirements, cost analysis, competitors, and ICP data. All sources cited. Unknowns are marked as [TBD — Not Yet Validated].</div>
+</div>
+
+<div class="main">
+
+<!-- === AVATAR DISPLAY SECTION === -->
+<div class="sec">
+  <div class="sn">01 — VoiceGrow™ Avatar Across Devices</div>
+  <div class="st">Watch Face · Desk Companion · Ray-Ban Meta Display Glasses</div>
+  <div class="sd">The avatar lives on the wearable, optionally mirrors to a desk device, and extends to AR glasses via Meta's Wearables Device Access Toolkit (developer preview launched Dec 2025, general availability 2026).</div>
+
+  <div class="avatar-section">
+    <div class="av-devices">
+      <!-- WATCH -->
+      <div class="av-device">
+        <div class="av-device-label">Galaxy Watch 8 — Primary</div>
+        <div class="watch-frame">
+          <div class="wf-band-t"></div>
+          <div class="wf-body">
+            <div class="wf-screen">
+              <div class="mini-av"><div class="bod"><div class="ey-l"></div><div class="ey-r"></div><div class="mth"></div></div></div>
+              <div class="mini-bar"><div class="mini-bar-fill"></div></div>
+              <div class="mini-label">VoiceGrow — 72%</div>
+            </div>
+          </div>
+          <div class="wf-band-b"></div>
+        </div>
+        <div class="av-device-note">Always-on companion. Avatar grows<br>with in-range voice regulation.<br>Wear OS 6 · Exynos W1000 · $349+<br><em style="color:var(--teal-glow)">Source: Samsung.com, July 2025</em></div>
+      </div>
+
+      <!-- DESK -->
+      <div class="av-device">
+        <div class="av-device-label">Desk Companion — Optional</div>
+        <div class="desk-frame">
+          <div class="desk-body">
+            <div class="desk-screen">
+              <div class="mini-av" style="width:44px;height:44px">
+                <div class="bod" style="width:38px;height:38px">
+                  <div class="ey-l" style="width:5px;height:6px;top:12px;left:9px"></div>
+                  <div class="ey-r" style="width:5px;height:6px;top:12px;right:9px"></div>
+                  <div class="mth" style="width:10px;height:5px;bottom:10px"></div>
+                </div>
+              </div>
+              <div class="mini-bar" style="width:70px"><div class="mini-bar-fill"></div></div>
+              <div class="mini-label">Bloom Stage — 340 XP</div>
+            </div>
+            <div class="desk-stand"></div>
+          </div>
+        </div>
+        <div class="av-device-note">Larger display for classroom visibility.<br>BLE sync with watch. Non-distracting.<br>Samsung tablet or custom display.<br><em style="color:var(--teal-glow)">Phase 2 hardware — 2028+</em></div>
+      </div>
+
+      <!-- GLASSES -->
+      <div class="av-device">
+        <div class="av-device-label">Ray-Ban Meta Display — AR</div>
+        <div class="glasses-frame">
+          <div class="gl-body">
+            <div class="gl-arm l"></div>
+            <div class="gl-lens l">
+              <div class="gl-screen">
+                <div style="font-size:4px;color:rgba(255,255,255,0.25);margin-bottom:2px">AMBIENT VIEW</div>
+              </div>
+            </div>
+            <div class="gl-bridge"></div>
+            <div class="gl-lens r">
+              <div class="gl-screen" style="background:rgba(10,22,20,0.7)">
+                <div class="gl-bubble">↓ 2dB</div>
+                <div class="gl-av"><div class="bod"><div class="ey-l"></div><div class="ey-r"></div></div></div>
+                <div class="gl-xp">420 XP</div>
+                <div class="gl-notif">IN RANGE ✓</div>
+                <div class="gl-hud"></div>
+              </div>
+            </div>
+            <div class="gl-arm r"></div>
+          </div>
+        </div>
+        <div class="av-device-note">Monocular HUD on right lens shows avatar + status.<br>Meta Wearables Device Access Toolkit SDK.<br>Camera + mic + speaker access. $799.<br><em style="color:var(--teal-glow)">Source: Meta Developers, Dec 2025. GA 2026.</em></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === INTERACTIVE LAYERS === -->
+<div class="sec">
+  <div class="sn">02 — Enterprise Architecture — Click to Expand</div>
+  <div class="st">Seven Layers with Deep Dive Data</div>
+  <div class="sd">Each layer expands to show patent landscape, engineering stack, cost analysis &amp; COGS, top competitors, and ideal customer profile.</div>
+
+  <div class="layer-grid" id="layers"><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#1a9e8e">1</div>
+      <div><div class="lc-name">Hardware Layer</div><div class="lc-sub">Galaxy Watch 8 + BrooksClip™</div></div>
+      <div class="lc-tags"><span class="lc-tag core">Core Patent — Filed</span><span class="lc-tag prov">Prov B — In Dev</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>Core Patent A (filed Mar 5, 2026): Wearable system with on-device mic at 16kHz, 4-state adaptive FSM, escalating haptic feedback. Claims apparatus, method, system.</li><li>Prov B (target 30–60 days): BrooksClip vibration-gated voice attribution — body-worn contact sensor confirms voice is wearer's via laryngeal vibration. Zero prior art identified for this specific combination.</li><li>Nearest prior art: US9472207B2 (Emotive Aid, 2016) — autism wearable with vibration but uses caregiver voice analysis, not wearer's own voice. Phoeb-X US11,779,275 — covers inbound sensory filtering, not outbound voice monitoring.</li><li>WIPO AT patent filings growing at 42% annual rate (WIPO Technology Trends 2021). Voice-specific wearable monitoring remains a white space.</li></ul><div class="cite">Sources: USPTO, WIPO AT Technology Trends 2021, Google Patents</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>Wear OS 6 (One UI 8 Watch) on Samsung Exynos W1000 (3nm)</li><li>Kotlin + Jetpack Compose for watch app</li><li>Samsung Health Sensor SDK for PPG, BIA, skin temp</li><li>Android AudioRecord API for mic capture (16kHz mono)</li><li>BLE 5.0 stack for BrooksClip communication</li><li>Knox Manage SDK for Freestanding Mode enrollment</li><li>Skills needed: Kotlin, Wear OS, BLE, Samsung SDK, Android audio</li></ul><div class="cite">Source: Samsung Developer Docs, Android Developer Reference</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis &amp; COGS</h5><ul><li>Galaxy Watch 8 40mm retail: $349 (BT), $399 (LTE)</li><li>Samsung enterprise/education pricing: [TBD — under NDA negotiation]</li><li>BrooksClip prototype: UTC engineering R&amp;D — current cost [TBD — university partnership]</li><li>Per-unit COGS estimate at scale (Phase 1): ~$200–250 (watch) + ~$15–30 (clip prototype)</li><li>Sell price: $249 school / $279 consumer</li><li>Phase 1 margin: Negative on hardware (subsidized by platform subscription revenue)</li><li>Phase 2 proprietary HW target COGS: $40–80 (custom PCB + case)</li></ul><div class="cite">Sources: Samsung.com pricing July 2025, SammyGuru, Android Central</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>Revibe Connect (Pearson): Galaxy Watch 7, ADHD focus, accelerometer-based. Acquired Oct 2025. Does NOT monitor voice. $199.</li><li>Phoeb-X: Patent holder (US11,779,275). Inbound sensory filtering. No commercial product shipping.</li><li>Mightier: Biofeedback gaming (heart rate). iPad-based, not wearable. $49.99/mo.</li><li>Empatica (Embrace2): Seizure detection FDA-cleared. Medical device, not educational AT.</li><li>None monitor outgoing voice amplitude with haptic feedback for self-regulation.</li></ul><div class="cite">Sources: USPTO, company websites, Pearson investor disclosures</div></div>
+        <div class="deep-box db-icp"><h5>👤 Ideal Customer Profile</h5><ul><li>Primary: School district Special Education Director (check signer). 300+ discovery interviews confirmed.</li><li>Secondary: Private SLP/OT practice owner (2–10 therapists).</li><li>End user: Child ages 5–14 with autism or ADHD affecting voice regulation.</li><li>Budget source: IDEA Part B restricted funds, Title IV-A, district general fund.</li><li>Decision cycle: IEP team recommends → SpEd Director approves → procurement issues PO. 4–12 weeks.</li></ul><div class="cite">Sources: ASHA funding overview, IDEA 34 CFR §300, 300+ Sensory Bridges discovery interviews</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#7c4dbe">2</div>
+      <div><div class="lc-name">On-Device AI Layer</div><div class="lc-sub">4-State FSM + Prosody Classifier</div></div>
+      <div class="lc-tags"><span class="lc-tag core">Core Patent — Filed</span><span class="lc-tag prov">Prov A — In Dev</span><span class="lc-tag prov">Prov E — In Dev</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>Core Patent A claims: 4-state adaptive FSM (Sentry → Elevated Monitor → Alert → Cooldown) with variable sampling rates per state. Novel combination of state machine + voice amplitude monitoring.</li><li>Prov A (target 60–90 days): Multi-modal biometric classification — fusing voice amplitude with PPG/HRV, skin temp, accelerometer for compound behavioral pattern detection.</li><li>Prov E (target 90–120 days): Closed-loop adaptive training — dose-aware intervention, habituation prevention, stimulus rotation, fading protocols.</li><li>Nearest prior art: SpeechVive (US patent) uses accelerometer-based voice onset detection for Parkinson's — different population, different modality, different purpose.</li></ul><div class="cite">Sources: USPTO, Brooks Band non-provisional application (filed Mar 5, 2026)</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>On-device ML inference using TensorFlow Lite Micro on Exynos W1000</li><li>Custom Kotlin FSM engine with configurable state transition thresholds</li><li>Audio feature extraction: RMS amplitude, zero-crossing rate, spectral centroid</li><li>Prosody features: pitch via autocorrelation, speech rate, pause detection</li><li>50ms audio frame → &lt;1ms processing → ~56ms end-to-end latency</li><li>Skills needed: Kotlin, TFLite, DSP/audio processing, state machine design, ML model training (Python/TF for offline training)</li></ul><div class="cite">Source: Brooks Band performance notes, Android AudioRecord API docs</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>Development cost: Software engineer salary ($90K–$130K/yr) or contract ($100–$175/hr)</li><li>ML model training: Compute cost minimal (small model, &lt;1MB). Data collection cost is the real expense — requires pilot deployment data.</li><li>No additional hardware cost — runs on existing watch sensors.</li><li>Ongoing: Model retraining/updates via Knox Manage OTA push.</li></ul><div class="cite">Source: Glassdoor Wear OS developer salaries 2025, AWS ML training costs</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>No identified competitor uses a multi-state FSM for voice amplitude self-regulation.</li><li>Revibe uses simple timer-based alerting (not adaptive, not voice-based).</li><li>Generic wellness apps (Calm, Headspace) use HR-based stress detection — different input signal entirely.</li><li>Academic: Northwestern Rogers Lab explored vibrotactile voice feedback — published research, no commercial product, no FSM.</li></ul><div class="cite">Sources: Revibe patent US10,624,590B2, academic literature review</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For SLP: Objective, quantified voice regulation data replacing subjective observation notes. Saves 4–6 hrs/week documentation time.</li><li>For OT: Biometric correlation data (HRV + voice amplitude) enables regulation pattern identification.</li><li>For Parent: Longitudinal trend visibility — 'Is my child improving?' answered with data, not opinion.</li><li>For School Admin: IEP goal compliance evidence generated automatically.</li></ul><div class="cite">Source: 300+ Sensory Bridges discovery interviews, Lois Brady consultation Mar 24, 2026</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#3064b8">3</div>
+      <div><div class="lc-name">Feedback + Avatar Layer</div><div class="lc-sub">Haptic · Visual · VoiceGrow™</div></div>
+      <div class="lc-tags"><span class="lc-tag core">Core Patent — Haptic</span><span class="lc-tag prov">Prov E — Dose-Aware</span><span class="lc-tag prov">Prov F — Avatar</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>Core Patent A: Escalating haptic vibration method — distinct from Revibe's time-based attention alerts (US10,624,590B2 covers accelerometer-triggered, not voice-triggered).</li><li>Prov F (target 90–120 days): Voice-regulation-linked avatar developmental progression. 5-stage system (Seed → Sprout → Bloom → Champion → Graduate). XP correlated to minutes of in-range voice. No prior art for voice-amplitude-linked avatar growth.</li><li>Key differentiator from Revibe: Rewards self-regulation of voice output, not attention/fidgeting compliance. Different signal, different modality, different behavioral target.</li><li>Anti-contamination safeguards (Prov E): Stimulus rotation, shifting thresholds, escalation frequency monitoring — addresses reinforcer dependency risk raised by clinical advisors.</li></ul><div class="cite">Sources: Revibe US10,624,590B2, Lois Brady clinical consultation Mar 24, 2026</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>Haptic: Android Vibrator API (direct call, not notification — bypasses DND)</li><li>Avatar rendering: Jetpack Compose Canvas API for watch face</li><li>Avatar state machine: Kotlin coroutines managing XP accumulation and stage transitions</li><li>Desk companion: Android tablet app (Kotlin) receiving BLE avatar state sync</li><li>Ray-Ban Meta integration: Meta Wearables Device Access Toolkit (Android SDK via GitHub Packages). Camera + mic access in preview. Display HUD access planned for future iterations.</li><li>Skills needed: Jetpack Compose, Canvas/custom drawing, BLE, Meta Wearables SDK (Kotlin/Swift), animation design</li></ul><div class="cite">Source: Meta Wearables Developer Center (Dec 2025), Android Vibrator API docs</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>Avatar design: $5K–$15K for professional character design + animation sprite sheets</li><li>Watch face development: Included in core app development cost</li><li>Ray-Ban Meta Display glasses: $799 retail (not required — optional consumer/adult SKU)</li><li>Meta Wearables SDK: Free. Publishing limited to select partners in preview, GA 2026.</li><li>OT/PT challenge content: Partnership-based (licensed content from therapy tool providers) — revenue share model, not upfront cost</li></ul><div class="cite">Sources: Meta.com Ray-Ban Display pricing Sept 2025, Meta Developer FAQ</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>Mightier: Heart rate biofeedback + gaming on iPad. $49.99/mo. No wearable, no voice, no IEP integration.</li><li>Floreo VR: VR social skills training for autism. $40/mo. No wearable, no real-time feedback, no biometric data.</li><li>Brain Power: Google Glass-based autism social coaching. Limited availability. No voice monitoring.</li><li>No competitor combines voice regulation + avatar gamification + AR glasses extension.</li></ul><div class="cite">Sources: Company websites, product pricing pages accessed Mar 2026</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For Child: Intrinsic motivation via avatar growth. Non-punitive. Goal is graduation (device independence).</li><li>For SLP: Configurable response parameters within scope of practice. No one-size-fits-all.</li><li>For Parent (consumer): Visible progress. Child is excited to 'grow' their avatar — engagement driver.</li><li>For AR/VR partner: Integration ecosystem. Licensed content marketplace opportunity.</li></ul><div class="cite">Source: Lois Brady SLP consultation, 300+ discovery interviews</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#c5a044">4</div>
+      <div><div class="lc-name">Enterprise MDM Layer</div><div class="lc-sub">Samsung Knox Manage → Bridges MDM</div></div>
+      <div class="lc-tags"><span class="lc-tag prov">Prov C — Pediatric Knox</span><span class="lc-tag fut">Future — Bridges MDM</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>Prov C (target 60–90 days): Novel Knox Manage configuration method for pediatric SLP/OT use in school settings. Freestanding Mode + FERPA consent gating + role-based data access.</li><li>No identified patent covers Knox Manage configured specifically for educational assistive technology with consent-gated data pipelines.</li><li>Samsung Knox is Samsung's IP. Our claims cover the configuration method and consent architecture, not Knox itself.</li><li>Future: Hardware-agnostic MDM (Bridges MDM) for proprietary hardware deployment — separate filing.</li></ul><div class="cite">Sources: Samsung Knox documentation, USPTO search</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>Samsung Knox Manage console (web-based admin)</li><li>Knox Mobile Enrollment (KME) for QR code provisioning</li><li>Knox Manage API for policy deployment and OTA updates</li><li>Android Enterprise APIs for Freestanding Mode (no phone required after setup)</li><li>FERPA consent module: Custom web app (React + Node.js) integrated with Knox via REST API</li><li>Skills needed: Knox Manage admin, Android Enterprise, REST API, React/Node.js, FERPA compliance architecture</li></ul><div class="cite">Source: Samsung Knox Developer Portal, Android Enterprise documentation</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>Knox Manage license: ~$3–$5/device/month (enterprise volume pricing under negotiation)</li><li>Pentech staging/kitting: [TBD — pricing under Samsung NDA discussion]</li><li>Consent platform development: $15K–$30K (React web app)</li><li>Ongoing: Knox Manage subscription is pass-through cost to school district</li><li>Phase 2 Bridges MDM development: $100K–$200K (custom MDM is a major engineering project)</li></ul><div class="cite">Sources: Samsung Knox pricing page, industry MDM cost benchmarks</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>Revibe (Pearson): Uses Knox on Galaxy Watch 7. First mover in education wearable + Knox. We are second. Market validates the approach.</li><li>Apple Classroom: iPad-only device management. No wearable. No Freestanding Mode equivalent.</li><li>Google Workspace for Education: Chromebook MDM. No wearable device management.</li><li>Jamf School: Apple device MDM for education. No Wear OS support.</li><li>Knox Manage is the only MDM that supports Freestanding Mode for Wear OS — Samsung exclusive advantage.</li></ul><div class="cite">Sources: Samsung Knox comparison page, Revibe product specs, Apple Classroom docs</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For School IT: Familiar Samsung ecosystem. QR enrollment. Remote wipe for FERPA compliance.</li><li>For SpEd Director: Enterprise-grade security argument for procurement approval.</li><li>For District Superintendent: Existing Samsung relationship (many districts already use Samsung tablets).</li><li>Procurement advantage: 6-week cycle (IT-familiar vendor) vs. 6-month cycle (unknown startup hardware).</li></ul><div class="cite">Source: Samsung education case studies, EdSurge procurement research June 2024</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#2d8c50">5</div>
+      <div><div class="lc-name">Documentation Layer</div><div class="lc-sub">IEP · Medicaid · Session Notes</div></div>
+      <div class="lc-tags"><span class="lc-tag prov">Prov C — IEP/Medicaid</span><span class="lc-tag prov">Prov D — Billing Pipeline</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>Prov C: System-level combination of wearable sensor data → auto-formatted IEP progress documentation (IDEA § 300.320) + Medicaid billing records (HCBS waiver-aligned). No competitor claims this domain.</li><li>Prov D: Specific method claims for transforming raw wearable events into CPT code-aligned session records with multi-payer output formatting.</li><li>Nearest prior art: Electronic IEP platforms (Frontline/PowerSchool) — no wearable integration. No device-generated documentation.</li><li>2026 CPT updates: 12 new codes for assistive technology services. 5 new short-duration remote monitoring codes (2–15 days). RTM extended to non-physician providers including PTs and behavioral health specialists.</li></ul><div class="cite">Sources: AMA CPT 2026 (Sep 2025), CMS PFS Proposed Rule (Jul 2025), ASHA</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>Backend: Node.js or Python (FastAPI) REST API</li><li>Database: PostgreSQL with row-level security (FERPA/COPPA compliance)</li><li>Document generation: PDF via Puppeteer or ReportLab; DOCX via docx-js</li><li>FHIR integration: For interoperability with school health record systems (future)</li><li>Consent management: OAuth 2.0 + custom consent state machine</li><li>Encryption: AES-256 at rest, TLS 1.3 in transit</li><li>Skills needed: Node.js/Python, PostgreSQL, FHIR, PDF generation, FERPA/COPPA compliance, healthcare data architecture</li></ul><div class="cite">Source: ONC FHIR mandate, FERPA 34 CFR §99, COPPA 16 CFR Part 312</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>Platform development: $60K–$100K (MVP with IEP progress + session notes)</li><li>FERPA/COPPA compliance audit: $10K–$20K</li><li>Hosting: $500–$2K/mo at pilot scale (AWS/GCP with BAA)</li><li>Revenue: $59/student/yr (purchase tier) to $99/student/yr (managed rental). This is the primary recurring revenue driver.</li><li>Medicaid revenue: Indirect — therapist bills more sessions because documentation burden is reduced. Brooks Band does not bill Medicaid directly.</li></ul><div class="cite">Sources: TennCare billing manual (Sep 2025), CMS Medicaid SBS guide (Mar 2024), Sensory Bridges business model</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>Frontline (PowerSchool): IEP management platform. No wearable integration. No auto-generated data.</li><li>Presence Learning: Teletherapy + documentation. No wearable, no objective sensor data.</li><li>SimplePractice: OT/SLP practice management. SOAP notes, billing. No wearable integration.</li><li>TheraPlatform: Teletherapy + notes. No device data input.</li><li>Gap: No competitor auto-generates IEP progress data or Medicaid billing documentation from a wearable device.</li></ul><div class="cite">Sources: Company websites, product feature comparisons accessed Mar 2026</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For SLP: 4–6 hours/week saved on documentation (validated across 300+ interviews). Enables 2–3 additional billable sessions/week.</li><li>For School District: Medicaid claiming rate improvement. CMS TAC compliance deadline Jul 1, 2026. Districts actively seeking tools to increase SBS claiming.</li><li>For IEP Team: Objective progress data formatted to IDEA § 300.320 requirements. Reduces IEP meeting preparation time.</li><li>Medicaid math: Average SLP Medicaid reimbursement per session ~$75–$120 (varies by state). 2 additional sessions/week × 40 weeks = $6K–$9.6K additional revenue per therapist per year.</li></ul><div class="cite">Sources: CMS/Mathematica TAC, TN Dept of Education School-Based Medicaid page, ASHA salary survey</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#d68a18">6</div>
+      <div><div class="lc-name">Analytics Layer</div><div class="lc-sub">Outcomes · Caseload · Research API</div></div>
+      <div class="lc-tags"><span class="lc-tag fut">Future — Population Analytics</span><span class="lc-tag fut">Future — Federated Learning</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Patent Landscape</h5><ul><li>No current filing for analytics layer — this is Phase 3 (2028+) IP.</li><li>Potential filing: Population-level behavioral analytics derived from de-identified wearable data in educational settings.</li><li>Potential filing: Federated learning system for model improvement without centralizing student data.</li><li>Market context: Digital patient monitoring patent filings growing at 19.2% CAGR. US leads with 3,000+ patents in wireless sensor + AI + real-time analytics.</li></ul><div class="cite">Sources: ResearchAndMarkets Digital Patient Monitoring Patent Landscape 2024</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Stack</h5><ul><li>Data warehouse: BigQuery or Snowflake (de-identified aggregate data only)</li><li>Dashboards: React + Recharts or D3.js</li><li>Research API: REST/GraphQL with IRB-gated access tokens</li><li>Federated learning: TensorFlow Federated (future)</li><li>De-identification: HIPAA Safe Harbor method for research datasets</li><li>Skills needed: Data engineering, BigQuery/Snowflake, React, D3, federated ML, research data governance</li></ul><div class="cite">Source: HIPAA Safe Harbor 45 CFR §164.514(b), TensorFlow Federated docs</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>Development: $50K–$80K (dashboard + research API MVP)</li><li>Ongoing: $2K–$5K/mo cloud infrastructure at scale</li><li>Revenue potential: Research data licensing ($50K–$200K/yr per university partner)</li><li>Revenue potential: Population insights subscriptions for school districts ($5K–$15K/yr per district)</li><li>[TBD: Pricing not validated. Requires research partnership agreements.]</li></ul><div class="cite">Source: Industry benchmarks for health data licensing, AWS/GCP pricing</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Top Competitors</h5><ul><li>Illuminate Education: Student data analytics. No wearable data, no biometric integration.</li><li>Panorama Education: Social-emotional learning surveys. Self-report data, not sensor data.</li><li>No competitor provides longitudinal wearable-derived behavioral analytics for special education populations.</li><li>[TBD: Competitive landscape for this layer is genuinely open.]</li></ul><div class="cite">Source: EdTech market analysis, company websites</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For Researchers (UTC, Vanderbilt): IRB-approved access to de-identified longitudinal regulation data. Publication-ready.</li><li>For District: Evidence for IDEA compliance and program effectiveness reporting.</li><li>For Policymakers: Population-level data on assistive technology outcomes across demographics.</li><li>For Sensory Bridges: Data moat. Longitudinal behavioral dataset is the long-term defensibility.</li></ul><div class="cite">Source: UTC IRB Protocol #2025-0084, Vanderbilt Builder Program</div></div>
+      </div>
+    </div>
+  </div><div class="layer-card">
+    <div class="lc-header" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+      <div class="lc-num" style="color:#c44d5a">7</div>
+      <div><div class="lc-name">FDA Conversion Layer</div><div class="lc-sub">Wellness → Pre-Sub → 510(k)</div></div>
+      <div class="lc-tags"><span class="lc-tag core">Wellness — Active</span><span class="lc-tag fut">510(k) — 2029 Target</span></div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ Regulatory Landscape</h5><ul><li>Current status: General wellness product under FDA Revised General Wellness Policy Guidance (January 6, 2026). Not a medical device.</li><li>IDEA assistive technology classification: FERPA + COPPA are primary compliance layers.</li><li>2028 target: FDA Pre-Submission (Pre-Sub) meeting. This is a free, non-binding meeting with FDA to discuss intended regulatory pathway and predicate device selection.</li><li>2029 target: 510(k) submission. Small business review fee: $6,517. Establishment registration: $11,423 (waivable under $1M gross receipts).</li><li>Total 510(k) pathway cost: $75K–$150K (consultant + clinical study + QMS + testing + fees).</li></ul><div class="cite">Sources: FDA MDUFA Fees FY 2026 (Jul 2025), 510kFDA.com cost estimates, FDA Pre-Sub guidance</div></div>
+        <div class="deep-box db-eng"><h5>🔧 Engineering Requirements</h5><ul><li>QMS (Quality Management System): ISO 13485 or 21 CFR 820 QMSR compliance</li><li>Design controls: Full design history file from concept through V&amp;V</li><li>Software validation: IEC 62304 (medical device software lifecycle)</li><li>Risk management: ISO 14971</li><li>Cybersecurity: FDA premarket cybersecurity guidance (2023)</li><li>Clinical validation study: Prospective outcomes study with sufficient statistical power</li><li>Skills needed: Regulatory affairs specialist, QMS consultant, clinical research coordinator, biostatistician</li></ul><div class="cite">Sources: FDA 21 CFR 820, IEC 62304, ISO 14971, ISO 13485</div></div>
+        <div class="deep-box db-cost"><h5>💰 Cost Analysis</h5><ul><li>510(k) regulatory consultant: $12K–$20K</li><li>Clinical validation study: $30K–$60K (design + execution + analysis)</li><li>QMS buildout: $15K–$30K</li><li>FDA user fees (small business): $6,517 (510k) + $11,423 (registration) = ~$18K</li><li>Testing (biocompatibility, electrical, EMC): $10K–$30K if proprietary hardware</li><li>Total: $75K–$150K. Funded from 2028+ commercial revenue and growth-stage capital, NOT pre-seed.</li><li>Timeline: 90–120 day FDA review after submission (for traditional 510(k))</li></ul><div class="cite">Sources: FDA MDUFA FY 2026, Medical Device Academy, 510kFDA.com</div></div>
+        <div class="deep-box db-comp"><h5>🎯 Competitive Advantage of FDA Clearance</h5><ul><li>Enables clinical outcome claims (not currently possible under wellness positioning).</li><li>Opens insurance reimbursement pathway — private payers require FDA clearance for DME coverage.</li><li>Competitive moat: 510(k) clearance is a 12–18 month process competitors must independently complete.</li><li>Predicate device: [TBD — must be identified during Pre-Sub. No obvious predicate exists today, which may require De Novo pathway instead of 510(k).]</li></ul><div class="cite">Sources: FDA 510(k) pathway guide, FDA De Novo classification guidance</div></div>
+        <div class="deep-box db-icp"><h5>👤 Value Add for ICP</h5><ul><li>For Clinicians: Ability to make clinical claims about intervention efficacy.</li><li>For Insurance: Reimbursement as DME (durable medical equipment) — dramatically expands addressable market.</li><li>For School Districts: Strengthens procurement justification with FDA clearance evidence.</li><li>For Investors: De-risks the platform with regulatory validation. Increases company valuation 3–5x.</li></ul><div class="cite">Source: MedTech valuation benchmarks, FDA clearance impact analysis</div></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- === MOAT === -->
+<div class="sec">
+  <div class="sn">03 — Five-Layer IP Moat</div>
+  <div class="st">A Competitor Must Design Around All Five Simultaneously</div>
+  <div class="moat-grid">
+    <div class="ml m1"><div class="mn">1</div><div class="mm">Core Voice</div><div class="md">4-state FSM, adaptive sampling, on-device processing, bidirectional haptic</div></div>
+    <div class="ml m2"><div class="mn">2</div><div class="mm">Voice Isolation</div><div class="md">BrooksClip vibration-gated attribution, dual-device BLE</div></div>
+    <div class="ml m3"><div class="mn">3</div><div class="mm">Adaptive Training</div><div class="md">Dose-aware, fading, population calibration, anti-contamination</div></div>
+    <div class="ml m4"><div class="mn">4</div><div class="mm">Documentation</div><div class="md">IEP auto-doc, Medicaid billing pipeline, session notes</div></div>
+    <div class="ml m5"><div class="mn">5</div><div class="mm">Avatar + AR</div><div class="md">Voice-linked growth, OT/PT challenges, graduation, AR/VR</div></div>
+  </div>
+</div>
+
+<div class="lf">
+  Confidential — Sensory Bridges, Inc. · Attorney Work Product Privilege<br>
+  Patent Counsel: Stephen Adams, Chambliss Law · All sources cited inline · Unknowns marked [TBD]<br>
+  © 2026 Sensory Bridges, Inc.
+</div>
+</div>
+
+<script>
+const layers = [
+  {
+    num: "1", color: "#1a9e8e", name: "Hardware Layer", sub: "Galaxy Watch 8 + BrooksClip™",
+    tags: [{t:"Core Patent — Filed",c:"core"},{t:"Prov B — In Dev",c:"prov"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "Core Patent A (filed Mar 5, 2026): Wearable system with on-device mic at 16kHz, 4-state adaptive FSM, escalating haptic feedback. Claims apparatus, method, system.",
+        "Prov B (target 30–60 days): BrooksClip vibration-gated voice attribution — body-worn contact sensor confirms voice is wearer's via laryngeal vibration. Zero prior art identified for this specific combination.",
+        "Nearest prior art: US9472207B2 (Emotive Aid, 2016) — autism wearable with vibration but uses caregiver voice analysis, not wearer's own voice. Phoeb-X US11,779,275 — covers inbound sensory filtering, not outbound voice monitoring.",
+        "WIPO AT patent filings growing at 42% annual rate (WIPO Technology Trends 2021). Voice-specific wearable monitoring remains a white space.",
+      ],
+      cite: "Sources: USPTO, WIPO AT Technology Trends 2021, Google Patents"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "Wear OS 6 (One UI 8 Watch) on Samsung Exynos W1000 (3nm)",
+        "Kotlin + Jetpack Compose for watch app",
+        "Samsung Health Sensor SDK for PPG, BIA, skin temp",
+        "Android AudioRecord API for mic capture (16kHz mono)",
+        "BLE 5.0 stack for BrooksClip communication",
+        "Knox Manage SDK for Freestanding Mode enrollment",
+        "Skills needed: Kotlin, Wear OS, BLE, Samsung SDK, Android audio"
+      ],
+      cite: "Source: Samsung Developer Docs, Android Developer Reference"
+    },
+    cost: {
+      title: "Cost Analysis & COGS",
+      items: [
+        "Galaxy Watch 8 40mm retail: $349 (BT), $399 (LTE)",
+        "Samsung enterprise/education pricing: [TBD — under NDA negotiation]",
+        "BrooksClip prototype: UTC engineering R&D — current cost [TBD — university partnership]",
+        "Per-unit COGS estimate at scale (Phase 1): ~$200–250 (watch) + ~$15–30 (clip prototype)",
+        "Sell price: $249 school / $279 consumer",
+        "Phase 1 margin: Negative on hardware (subsidized by platform subscription revenue)",
+        "Phase 2 proprietary HW target COGS: $40–80 (custom PCB + case)"
+      ],
+      cite: "Sources: Samsung.com pricing July 2025, SammyGuru, Android Central"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "Revibe Connect (Pearson): Galaxy Watch 7, ADHD focus, accelerometer-based. Acquired Oct 2025. Does NOT monitor voice. $199.",
+        "Phoeb-X: Patent holder (US11,779,275). Inbound sensory filtering. No commercial product shipping.",
+        "Mightier: Biofeedback gaming (heart rate). iPad-based, not wearable. $49.99/mo.",
+        "Empatica (Embrace2): Seizure detection FDA-cleared. Medical device, not educational AT.",
+        "None monitor outgoing voice amplitude with haptic feedback for self-regulation."
+      ],
+      cite: "Sources: USPTO, company websites, Pearson investor disclosures"
+    },
+    icp: {
+      title: "Ideal Customer Profile",
+      items: [
+        "Primary: School district Special Education Director (check signer). 300+ discovery interviews confirmed.",
+        "Secondary: Private SLP/OT practice owner (2–10 therapists).",
+        "End user: Child ages 5–14 with autism or ADHD affecting voice regulation.",
+        "Budget source: IDEA Part B restricted funds, Title IV-A, district general fund.",
+        "Decision cycle: IEP team recommends → SpEd Director approves → procurement issues PO. 4–12 weeks."
+      ],
+      cite: "Sources: ASHA funding overview, IDEA 34 CFR §300, 300+ Sensory Bridges discovery interviews"
+    }
+  },
+  {
+    num: "2", color: "#7c4dbe", name: "On-Device AI Layer", sub: "4-State FSM + Prosody Classifier",
+    tags: [{t:"Core Patent — Filed",c:"core"},{t:"Prov A — In Dev",c:"prov"},{t:"Prov E — In Dev",c:"prov"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "Core Patent A claims: 4-state adaptive FSM (Sentry → Elevated Monitor → Alert → Cooldown) with variable sampling rates per state. Novel combination of state machine + voice amplitude monitoring.",
+        "Prov A (target 60–90 days): Multi-modal biometric classification — fusing voice amplitude with PPG/HRV, skin temp, accelerometer for compound behavioral pattern detection.",
+        "Prov E (target 90–120 days): Closed-loop adaptive training — dose-aware intervention, habituation prevention, stimulus rotation, fading protocols.",
+        "Nearest prior art: SpeechVive (US patent) uses accelerometer-based voice onset detection for Parkinson's — different population, different modality, different purpose."
+      ],
+      cite: "Sources: USPTO, Brooks Band non-provisional application (filed Mar 5, 2026)"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "On-device ML inference using TensorFlow Lite Micro on Exynos W1000",
+        "Custom Kotlin FSM engine with configurable state transition thresholds",
+        "Audio feature extraction: RMS amplitude, zero-crossing rate, spectral centroid",
+        "Prosody features: pitch via autocorrelation, speech rate, pause detection",
+        "50ms audio frame → <1ms processing → ~56ms end-to-end latency",
+        "Skills needed: Kotlin, TFLite, DSP/audio processing, state machine design, ML model training (Python/TF for offline training)"
+      ],
+      cite: "Source: Brooks Band performance notes, Android AudioRecord API docs"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "Development cost: Software engineer salary ($90K–$130K/yr) or contract ($100–$175/hr)",
+        "ML model training: Compute cost minimal (small model, <1MB). Data collection cost is the real expense — requires pilot deployment data.",
+        "No additional hardware cost — runs on existing watch sensors.",
+        "Ongoing: Model retraining/updates via Knox Manage OTA push."
+      ],
+      cite: "Source: Glassdoor Wear OS developer salaries 2025, AWS ML training costs"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "No identified competitor uses a multi-state FSM for voice amplitude self-regulation.",
+        "Revibe uses simple timer-based alerting (not adaptive, not voice-based).",
+        "Generic wellness apps (Calm, Headspace) use HR-based stress detection — different input signal entirely.",
+        "Academic: Northwestern Rogers Lab explored vibrotactile voice feedback — published research, no commercial product, no FSM."
+      ],
+      cite: "Sources: Revibe patent US10,624,590B2, academic literature review"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For SLP: Objective, quantified voice regulation data replacing subjective observation notes. Saves 4–6 hrs/week documentation time.",
+        "For OT: Biometric correlation data (HRV + voice amplitude) enables regulation pattern identification.",
+        "For Parent: Longitudinal trend visibility — 'Is my child improving?' answered with data, not opinion.",
+        "For School Admin: IEP goal compliance evidence generated automatically."
+      ],
+      cite: "Source: 300+ Sensory Bridges discovery interviews, Lois Brady consultation Mar 24, 2026"
+    }
+  },
+  {
+    num: "3", color: "#3064b8", name: "Feedback + Avatar Layer", sub: "Haptic · Visual · VoiceGrow™",
+    tags: [{t:"Core Patent — Haptic",c:"core"},{t:"Prov E — Dose-Aware",c:"prov"},{t:"Prov F — Avatar",c:"prov"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "Core Patent A: Escalating haptic vibration method — distinct from Revibe's time-based attention alerts (US10,624,590B2 covers accelerometer-triggered, not voice-triggered).",
+        "Prov F (target 90–120 days): Voice-regulation-linked avatar developmental progression. 5-stage system (Seed → Sprout → Bloom → Champion → Graduate). XP correlated to minutes of in-range voice. No prior art for voice-amplitude-linked avatar growth.",
+        "Key differentiator from Revibe: Rewards self-regulation of voice output, not attention/fidgeting compliance. Different signal, different modality, different behavioral target.",
+        "Anti-contamination safeguards (Prov E): Stimulus rotation, shifting thresholds, escalation frequency monitoring — addresses reinforcer dependency risk raised by clinical advisors."
+      ],
+      cite: "Sources: Revibe US10,624,590B2, Lois Brady clinical consultation Mar 24, 2026"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "Haptic: Android Vibrator API (direct call, not notification — bypasses DND)",
+        "Avatar rendering: Jetpack Compose Canvas API for watch face",
+        "Avatar state machine: Kotlin coroutines managing XP accumulation and stage transitions",
+        "Desk companion: Android tablet app (Kotlin) receiving BLE avatar state sync",
+        "Ray-Ban Meta integration: Meta Wearables Device Access Toolkit (Android SDK via GitHub Packages). Camera + mic access in preview. Display HUD access planned for future iterations.",
+        "Skills needed: Jetpack Compose, Canvas/custom drawing, BLE, Meta Wearables SDK (Kotlin/Swift), animation design"
+      ],
+      cite: "Source: Meta Wearables Developer Center (Dec 2025), Android Vibrator API docs"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "Avatar design: $5K–$15K for professional character design + animation sprite sheets",
+        "Watch face development: Included in core app development cost",
+        "Ray-Ban Meta Display glasses: $799 retail (not required — optional consumer/adult SKU)",
+        "Meta Wearables SDK: Free. Publishing limited to select partners in preview, GA 2026.",
+        "OT/PT challenge content: Partnership-based (licensed content from therapy tool providers) — revenue share model, not upfront cost"
+      ],
+      cite: "Sources: Meta.com Ray-Ban Display pricing Sept 2025, Meta Developer FAQ"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "Mightier: Heart rate biofeedback + gaming on iPad. $49.99/mo. No wearable, no voice, no IEP integration.",
+        "Floreo VR: VR social skills training for autism. $40/mo. No wearable, no real-time feedback, no biometric data.",
+        "Brain Power: Google Glass-based autism social coaching. Limited availability. No voice monitoring.",
+        "No competitor combines voice regulation + avatar gamification + AR glasses extension."
+      ],
+      cite: "Sources: Company websites, product pricing pages accessed Mar 2026"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For Child: Intrinsic motivation via avatar growth. Non-punitive. Goal is graduation (device independence).",
+        "For SLP: Configurable response parameters within scope of practice. No one-size-fits-all.",
+        "For Parent (consumer): Visible progress. Child is excited to 'grow' their avatar — engagement driver.",
+        "For AR/VR partner: Integration ecosystem. Licensed content marketplace opportunity."
+      ],
+      cite: "Source: Lois Brady SLP consultation, 300+ discovery interviews"
+    }
+  },
+  {
+    num: "4", color: "#c5a044", name: "Enterprise MDM Layer", sub: "Samsung Knox Manage → Bridges MDM",
+    tags: [{t:"Prov C — Pediatric Knox",c:"prov"},{t:"Future — Bridges MDM",c:"fut"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "Prov C (target 60–90 days): Novel Knox Manage configuration method for pediatric SLP/OT use in school settings. Freestanding Mode + FERPA consent gating + role-based data access.",
+        "No identified patent covers Knox Manage configured specifically for educational assistive technology with consent-gated data pipelines.",
+        "Samsung Knox is Samsung's IP. Our claims cover the configuration method and consent architecture, not Knox itself.",
+        "Future: Hardware-agnostic MDM (Bridges MDM) for proprietary hardware deployment — separate filing."
+      ],
+      cite: "Sources: Samsung Knox documentation, USPTO search"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "Samsung Knox Manage console (web-based admin)",
+        "Knox Mobile Enrollment (KME) for QR code provisioning",
+        "Knox Manage API for policy deployment and OTA updates",
+        "Android Enterprise APIs for Freestanding Mode (no phone required after setup)",
+        "FERPA consent module: Custom web app (React + Node.js) integrated with Knox via REST API",
+        "Skills needed: Knox Manage admin, Android Enterprise, REST API, React/Node.js, FERPA compliance architecture"
+      ],
+      cite: "Source: Samsung Knox Developer Portal, Android Enterprise documentation"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "Knox Manage license: ~$3–$5/device/month (enterprise volume pricing under negotiation)",
+        "Pentech staging/kitting: [TBD — pricing under Samsung NDA discussion]",
+        "Consent platform development: $15K–$30K (React web app)",
+        "Ongoing: Knox Manage subscription is pass-through cost to school district",
+        "Phase 2 Bridges MDM development: $100K–$200K (custom MDM is a major engineering project)"
+      ],
+      cite: "Sources: Samsung Knox pricing page, industry MDM cost benchmarks"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "Revibe (Pearson): Uses Knox on Galaxy Watch 7. First mover in education wearable + Knox. We are second. Market validates the approach.",
+        "Apple Classroom: iPad-only device management. No wearable. No Freestanding Mode equivalent.",
+        "Google Workspace for Education: Chromebook MDM. No wearable device management.",
+        "Jamf School: Apple device MDM for education. No Wear OS support.",
+        "Knox Manage is the only MDM that supports Freestanding Mode for Wear OS — Samsung exclusive advantage."
+      ],
+      cite: "Sources: Samsung Knox comparison page, Revibe product specs, Apple Classroom docs"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For School IT: Familiar Samsung ecosystem. QR enrollment. Remote wipe for FERPA compliance.",
+        "For SpEd Director: Enterprise-grade security argument for procurement approval.",
+        "For District Superintendent: Existing Samsung relationship (many districts already use Samsung tablets).",
+        "Procurement advantage: 6-week cycle (IT-familiar vendor) vs. 6-month cycle (unknown startup hardware)."
+      ],
+      cite: "Source: Samsung education case studies, EdSurge procurement research June 2024"
+    }
+  },
+  {
+    num: "5", color: "#2d8c50", name: "Documentation Layer", sub: "IEP · Medicaid · Session Notes",
+    tags: [{t:"Prov C — IEP/Medicaid",c:"prov"},{t:"Prov D — Billing Pipeline",c:"prov"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "Prov C: System-level combination of wearable sensor data → auto-formatted IEP progress documentation (IDEA § 300.320) + Medicaid billing records (HCBS waiver-aligned). No competitor claims this domain.",
+        "Prov D: Specific method claims for transforming raw wearable events into CPT code-aligned session records with multi-payer output formatting.",
+        "Nearest prior art: Electronic IEP platforms (Frontline/PowerSchool) — no wearable integration. No device-generated documentation.",
+        "2026 CPT updates: 12 new codes for assistive technology services. 5 new short-duration remote monitoring codes (2–15 days). RTM extended to non-physician providers including PTs and behavioral health specialists."
+      ],
+      cite: "Sources: AMA CPT 2026 (Sep 2025), CMS PFS Proposed Rule (Jul 2025), ASHA"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "Backend: Node.js or Python (FastAPI) REST API",
+        "Database: PostgreSQL with row-level security (FERPA/COPPA compliance)",
+        "Document generation: PDF via Puppeteer or ReportLab; DOCX via docx-js",
+        "FHIR integration: For interoperability with school health record systems (future)",
+        "Consent management: OAuth 2.0 + custom consent state machine",
+        "Encryption: AES-256 at rest, TLS 1.3 in transit",
+        "Skills needed: Node.js/Python, PostgreSQL, FHIR, PDF generation, FERPA/COPPA compliance, healthcare data architecture"
+      ],
+      cite: "Source: ONC FHIR mandate, FERPA 34 CFR §99, COPPA 16 CFR Part 312"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "Platform development: $60K–$100K (MVP with IEP progress + session notes)",
+        "FERPA/COPPA compliance audit: $10K–$20K",
+        "Hosting: $500–$2K/mo at pilot scale (AWS/GCP with BAA)",
+        "Revenue: $59/student/yr (purchase tier) to $99/student/yr (managed rental). This is the primary recurring revenue driver.",
+        "Medicaid revenue: Indirect — therapist bills more sessions because documentation burden is reduced. Brooks Band does not bill Medicaid directly."
+      ],
+      cite: "Sources: TennCare billing manual (Sep 2025), CMS Medicaid SBS guide (Mar 2024), Sensory Bridges business model"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "Frontline (PowerSchool): IEP management platform. No wearable integration. No auto-generated data.",
+        "Presence Learning: Teletherapy + documentation. No wearable, no objective sensor data.",
+        "SimplePractice: OT/SLP practice management. SOAP notes, billing. No wearable integration.",
+        "TheraPlatform: Teletherapy + notes. No device data input.",
+        "Gap: No competitor auto-generates IEP progress data or Medicaid billing documentation from a wearable device."
+      ],
+      cite: "Sources: Company websites, product feature comparisons accessed Mar 2026"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For SLP: 4–6 hours/week saved on documentation (validated across 300+ interviews). Enables 2–3 additional billable sessions/week.",
+        "For School District: Medicaid claiming rate improvement. CMS TAC compliance deadline Jul 1, 2026. Districts actively seeking tools to increase SBS claiming.",
+        "For IEP Team: Objective progress data formatted to IDEA § 300.320 requirements. Reduces IEP meeting preparation time.",
+        "Medicaid math: Average SLP Medicaid reimbursement per session ~$75–$120 (varies by state). 2 additional sessions/week × 40 weeks = $6K–$9.6K additional revenue per therapist per year."
+      ],
+      cite: "Sources: CMS/Mathematica TAC, TN Dept of Education School-Based Medicaid page, ASHA salary survey"
+    }
+  },
+  {
+    num: "6", color: "#d68a18", name: "Analytics Layer", sub: "Outcomes · Caseload · Research API",
+    tags: [{t:"Future — Population Analytics",c:"fut"},{t:"Future — Federated Learning",c:"fut"}],
+    patent: {
+      title: "Patent Landscape",
+      items: [
+        "No current filing for analytics layer — this is Phase 3 (2028+) IP.",
+        "Potential filing: Population-level behavioral analytics derived from de-identified wearable data in educational settings.",
+        "Potential filing: Federated learning system for model improvement without centralizing student data.",
+        "Market context: Digital patient monitoring patent filings growing at 19.2% CAGR. US leads with 3,000+ patents in wireless sensor + AI + real-time analytics."
+      ],
+      cite: "Sources: ResearchAndMarkets Digital Patient Monitoring Patent Landscape 2024"
+    },
+    eng: {
+      title: "Engineering Stack",
+      items: [
+        "Data warehouse: BigQuery or Snowflake (de-identified aggregate data only)",
+        "Dashboards: React + Recharts or D3.js",
+        "Research API: REST/GraphQL with IRB-gated access tokens",
+        "Federated learning: TensorFlow Federated (future)",
+        "De-identification: HIPAA Safe Harbor method for research datasets",
+        "Skills needed: Data engineering, BigQuery/Snowflake, React, D3, federated ML, research data governance"
+      ],
+      cite: "Source: HIPAA Safe Harbor 45 CFR §164.514(b), TensorFlow Federated docs"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "Development: $50K–$80K (dashboard + research API MVP)",
+        "Ongoing: $2K–$5K/mo cloud infrastructure at scale",
+        "Revenue potential: Research data licensing ($50K–$200K/yr per university partner)",
+        "Revenue potential: Population insights subscriptions for school districts ($5K–$15K/yr per district)",
+        "[TBD: Pricing not validated. Requires research partnership agreements.]"
+      ],
+      cite: "Source: Industry benchmarks for health data licensing, AWS/GCP pricing"
+    },
+    comp: {
+      title: "Top Competitors",
+      items: [
+        "Illuminate Education: Student data analytics. No wearable data, no biometric integration.",
+        "Panorama Education: Social-emotional learning surveys. Self-report data, not sensor data.",
+        "No competitor provides longitudinal wearable-derived behavioral analytics for special education populations.",
+        "[TBD: Competitive landscape for this layer is genuinely open.]"
+      ],
+      cite: "Source: EdTech market analysis, company websites"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For Researchers (UTC, Vanderbilt): IRB-approved access to de-identified longitudinal regulation data. Publication-ready.",
+        "For District: Evidence for IDEA compliance and program effectiveness reporting.",
+        "For Policymakers: Population-level data on assistive technology outcomes across demographics.",
+        "For Sensory Bridges: Data moat. Longitudinal behavioral dataset is the long-term defensibility."
+      ],
+      cite: "Source: UTC IRB Protocol #2025-0084, Vanderbilt Builder Program"
+    }
+  },
+  {
+    num: "7", color: "#c44d5a", name: "FDA Conversion Layer", sub: "Wellness → Pre-Sub → 510(k)",
+    tags: [{t:"Wellness — Active",c:"core"},{t:"510(k) — 2029 Target",c:"fut"}],
+    patent: {
+      title: "Regulatory Landscape",
+      items: [
+        "Current status: General wellness product under FDA Revised General Wellness Policy Guidance (January 6, 2026). Not a medical device.",
+        "IDEA assistive technology classification: FERPA + COPPA are primary compliance layers.",
+        "2028 target: FDA Pre-Submission (Pre-Sub) meeting. This is a free, non-binding meeting with FDA to discuss intended regulatory pathway and predicate device selection.",
+        "2029 target: 510(k) submission. Small business review fee: $6,517. Establishment registration: $11,423 (waivable under $1M gross receipts).",
+        "Total 510(k) pathway cost: $75K–$150K (consultant + clinical study + QMS + testing + fees)."
+      ],
+      cite: "Sources: FDA MDUFA Fees FY 2026 (Jul 2025), 510kFDA.com cost estimates, FDA Pre-Sub guidance"
+    },
+    eng: {
+      title: "Engineering Requirements",
+      items: [
+        "QMS (Quality Management System): ISO 13485 or 21 CFR 820 QMSR compliance",
+        "Design controls: Full design history file from concept through V&V",
+        "Software validation: IEC 62304 (medical device software lifecycle)",
+        "Risk management: ISO 14971",
+        "Cybersecurity: FDA premarket cybersecurity guidance (2023)",
+        "Clinical validation study: Prospective outcomes study with sufficient statistical power",
+        "Skills needed: Regulatory affairs specialist, QMS consultant, clinical research coordinator, biostatistician"
+      ],
+      cite: "Sources: FDA 21 CFR 820, IEC 62304, ISO 14971, ISO 13485"
+    },
+    cost: {
+      title: "Cost Analysis",
+      items: [
+        "510(k) regulatory consultant: $12K–$20K",
+        "Clinical validation study: $30K–$60K (design + execution + analysis)",
+        "QMS buildout: $15K–$30K",
+        "FDA user fees (small business): $6,517 (510k) + $11,423 (registration) = ~$18K",
+        "Testing (biocompatibility, electrical, EMC): $10K–$30K if proprietary hardware",
+        "Total: $75K–$150K. Funded from 2028+ commercial revenue and growth-stage capital, NOT pre-seed.",
+        "Timeline: 90–120 day FDA review after submission (for traditional 510(k))"
+      ],
+      cite: "Sources: FDA MDUFA FY 2026, Medical Device Academy, 510kFDA.com"
+    },
+    comp: {
+      title: "Competitive Advantage of FDA Clearance",
+      items: [
+        "Enables clinical outcome claims (not currently possible under wellness positioning).",
+        "Opens insurance reimbursement pathway — private payers require FDA clearance for DME coverage.",
+        "Competitive moat: 510(k) clearance is a 12–18 month process competitors must independently complete.",
+        "Predicate device: [TBD — must be identified during Pre-Sub. No obvious predicate exists today, which may require De Novo pathway instead of 510(k).]"
+      ],
+      cite: "Sources: FDA 510(k) pathway guide, FDA De Novo classification guidance"
+    },
+    icp: {
+      title: "Value Add for ICP",
+      items: [
+        "For Clinicians: Ability to make clinical claims about intervention efficacy.",
+        "For Insurance: Reimbursement as DME (durable medical equipment) — dramatically expands addressable market.",
+        "For School Districts: Strengthens procurement justification with FDA clearance evidence.",
+        "For Investors: De-risks the platform with regulatory validation. Increases company valuation 3–5x."
+      ],
+      cite: "Source: MedTech valuation benchmarks, FDA clearance impact analysis"
+    }
+  }
+];
+
+const container = document.getElementById('layers');
+layers.forEach((l, i) => {
+  const card = document.createElement('div');
+  card.className = 'layer-card';
+  card.innerHTML = `
+    <div class="lc-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="lc-num" style="color:${l.color}">${l.num}</div>
+      <div><div class="lc-name">${l.name}</div><div class="lc-sub">${l.sub}</div></div>
+      <div class="lc-tags">${l.tags.map(t=>`<span class="lc-tag ${t.c}">${t.t}</span>`).join('')}</div>
+      <div class="lc-toggle">▼</div>
+    </div>
+    <div class="lc-deep">
+      <div class="deep-inner">
+        <div class="deep-box db-patent"><h5>⚖️ ${l.patent.title}</h5><ul>${l.patent.items.map(i=>`<li>${i}</li>`).join('')}</ul><div class="cite">${l.patent.cite}</div></div>
+        <div class="deep-box db-eng"><h5>🔧 ${l.eng.title}</h5><ul>${l.eng.items.map(i=>`<li>${i}</li>`).join('')}</ul><div class="cite">${l.eng.cite}</div></div>
+        <div class="deep-box db-cost"><h5>💰 ${l.cost.title}</h5><ul>${l.cost.items.map(i=>`<li>${i}</li>`).join('')}</ul><div class="cite">${l.cost.cite}</div></div>
+        <div class="deep-box db-comp"><h5>🎯 ${l.comp.title}</h5><ul>${l.comp.items.map(i=>`<li>${i}</li>`).join('')}</ul><div class="cite">${l.comp.cite}</div></div>
+        <div class="deep-box db-icp"><h5>👤 ${l.icp.title}</h5><ul>${l.icp.items.map(i=>`<li>${i}</li>`).join('')}</ul><div class="cite">${l.icp.cite}</div></div>
+      </div>
+    </div>
+  `;
+  container.appendChild(card);
+});
+</script>
+
+
+</body></html>
